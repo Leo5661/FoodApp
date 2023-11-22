@@ -6,7 +6,7 @@ import Details from '../screens/Details';
 
 export type HomeStackParamList = {
   Home: undefined;
-  Details: undefined;
+  Details: {itemId: string};
 };
 
 const HomeStack = createNativeStackNavigator<HomeStackParamList>();

@@ -13,12 +13,17 @@ import {HomeStackParamList} from '../navigation/HomeStackNavigator';
 type Props = NativeStackScreenProps<HomeStackParamList, 'Home'>;
 
 const Home = ({navigation}: Props) => {
-  const handleUnder = () => {
-    console.log('Under');
+  const handleItemClick = (item: string) => {
+    navigation.navigate('Details', {itemId: item});
+    console.log(`Selected ${item}`);
   };
 
-  const handleOver = () => {
-    console.log('Over');
+  const handleAdd = (item: string) => {
+    console.log(`Added ${item}`);
+  };
+
+  const handleLike = (item: string) => {
+    console.log(`Liked ${item}`);
   };
 
   return (
@@ -76,7 +81,13 @@ const Home = ({navigation}: Props) => {
             numColumns={2}
             data={ItemList}
             renderItem={({item}) => (
-              <ItemCard price={item.price} name={item.title} />
+              <ItemCard
+                price={item.price}
+                name={item.title}
+                onItemClick={() => handleItemClick(item.title)}
+                onLike={() => handleLike(item.title)}
+                onAdd={() => handleAdd(item.title)}
+              />
             )}
             keyExtractor={(item: any) => item.id}
           />
