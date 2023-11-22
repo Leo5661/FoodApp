@@ -1,7 +1,9 @@
 import {View, Text} from 'react-native';
 import React from 'react';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {BottomNavStackParm} from '../navigation/BottomNavigator';
 
-type Props = {};
+type Props = NativeStackScreenProps<BottomNavStackParm, 'Favorite'>;
 
 const Favorite = (props: Props) => {
   return (

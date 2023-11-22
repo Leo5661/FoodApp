@@ -35,7 +35,7 @@ const BottomNavigator = () => {
         options={{
           tabBarLabel: 'Home',
           tabBarIcon: ({color}) => (
-            <HomeSvg width={20} height={20} fill={color} />
+            <HomeSvg width={20} height={20} stroke={color} />
           ),
         }}
       />
@@ -46,7 +46,7 @@ const BottomNavigator = () => {
         options={{
           tabBarLabel: 'Categories',
           tabBarIcon: ({color}) => (
-            <CategoriesSvg width={20} height={20} fill={color} />
+            <CategoriesSvg width={20} height={20} stroke={color} />
           ),
         }}
       />
@@ -57,7 +57,7 @@ const BottomNavigator = () => {
         options={{
           tabBarLabel: 'Favorite',
           tabBarIcon: ({color}) => (
-            <FavoriteSvg width={20} height={20} fill={color} />
+            <FavoriteSvg width={20} height={20} stroke={color} />
           ),
         }}
       />
