@@ -21,13 +21,13 @@ export const favoriteSlice = createSlice({
           action.payload.item,
         );
       } else {
-        state.favoriteItem.map((item: ItemType) => {
+        state.favoriteItem.forEach((item: ItemType) => {
           const index = state.favoriteItem.indexOf(item);
 
           if (state.favoriteItem[index].id == action.payload.item.id) {
-            state.favoriteItem = state.favoriteItem.splice(index, 1);
+            state.favoriteItem.splice(index, 1);
           } else {
-            state.favoriteItem = state.favoriteItem.splice(
+            state.favoriteItem.splice(
               state.favoriteItem.length,
               0,
               action.payload.item,

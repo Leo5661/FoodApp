@@ -1,7 +1,7 @@
 import {PayloadAction, createSlice} from '@reduxjs/toolkit';
 import {ItemType} from '../../utils/ItemList';
 
-type CartItemType = {
+export type CartItemType = {
   count: number;
   item: ItemType;
 };
@@ -26,14 +26,18 @@ export const cartSlice = createSlice({
         count: 1,
         item: action.payload.item,
       };
-      state.cartItem.forEach((item: any) => {
-        const index = state.cartItem.indexOf(item);
-        if (state.cartItem[index].item.id == action.payload.item.id) {
-          state.cartItem[index].count = state.cartItem[index].count + 1;
-        } else {
-          state.cartItem.splice(state.cartItem.length, 0, addItem);
-        }
-      });
+      if (state.cartItem.length == 0) {
+        state.cartItem.splice(state.cartItem.length, 0, addItem);
+      } else {
+        state.cartItem.forEach((item: any) => {
+          const index = state.cartItem.indexOf(item);
+          if (state.cartItem[index].item.id === action.payload.item.id) {
+            state.cartItem[index].count += 1;
+          } else {
+            state.cartItem.splice(state.cartItem.length, 0, addItem);
+          }
+        });
+      }
     },
     removeItem: (state, action: PayloadAction<ItemPayload>) => {
       state.cartItem.forEach((item: any) => {
