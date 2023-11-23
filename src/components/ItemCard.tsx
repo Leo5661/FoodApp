@@ -1,4 +1,4 @@
-import {View, Text, Pressable} from 'react-native';
+import {View, Text, Pressable, Image} from 'react-native';
 import React from 'react';
 import PlaceholderSvg from '../assets/placeholderImg.svg';
 import HeartSvg from '../assets/heart.svg';
@@ -7,12 +7,20 @@ import PlusSvg from '../assets/plus.svg';
 type Props = {
   price: number;
   name: string;
+  thumbnail: string;
   onItemClick: () => void;
   onLike: () => void;
   onAdd: () => void;
 };
 
-const ItemCard = ({price, name, onAdd, onItemClick, onLike}: Props) => {
+const ItemCard = ({
+  price,
+  name,
+  thumbnail,
+  onAdd,
+  onItemClick,
+  onLike,
+}: Props) => {
   return (
     <View className="w-2/4 items-center justify-center p-2 bg-transparent">
       <Pressable
@@ -22,7 +30,10 @@ const ItemCard = ({price, name, onAdd, onItemClick, onLike}: Props) => {
           <HeartSvg stroke={'black'} />
         </Pressable>
         <View className="my-2 w-full justify-center items-center flex-grow">
-          <PlaceholderSvg />
+          <Image
+            source={{uri: thumbnail}}
+            className="w-full h-20 rounded-md content-fi"
+          />
         </View>
         <View className="w-full flex-row justify-between">
           <View className="flex-col items-start">

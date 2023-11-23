@@ -3,7 +3,7 @@ import React from 'react';
 import {Polygon, Svg} from 'react-native-svg';
 
 type Props = {
-  rating: number;
+  rating: number | undefined;
 };
 
 const Star = ({fill = 'none'}) => (
@@ -16,6 +16,8 @@ const Star = ({fill = 'none'}) => (
 );
 
 const RatingStar = ({rating}: Props) => {
+  if (!rating) return null;
+
   const stars = [];
   for (let i = 1; i <= 5; i++) {
     let fill;

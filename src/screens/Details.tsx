@@ -1,5 +1,5 @@
 import {View, Text, Pressable, ScrollView} from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {HomeStackParamList} from '../navigation/HomeStackNavigator';
 import RightArrowSvg from '../assets/right_arrow.svg';
@@ -7,17 +7,58 @@ import BagSvg from '../assets/bag.svg';
 import RatingStar from '../components/RatingStar';
 import {ImageSlider} from 'react-native-image-slider-banner';
 import HeartSvg from '../assets/heart.svg';
+import {useDispatch} from '../hooks/useReduxHooks';
+import {getOff} from '../utils/util';
+import {addItem} from '../redux/slices/CartSlice';
+import {addToFavorite} from '../redux/slices/FavoriteSlice';
+import {useGetItemByIdQuery} from '../redux/slices/apiSlice/itemList';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Details'>;
 
 const Details = ({route, navigation}: Props) => {
+  const {isLoading, isSuccess, data, error} = useGetItemByIdQuery(
+    route.params.itemId,
+  );
+  const [image, setImage] = useState<{img: string}[]>([]);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (data) {
+      const imageArr = data.images.map(item => {
+        return {img: item};
+      });
+
+      setImage(image => [...image, ...imageArr]);
+    }
+  }, [data]);
+
   const handleBack = () => {
     navigation.goBack();
   };
 
-  const handleLike = () => {
-    console.log(`Liked ${route.params.itemId}`);
+  const handleBuy = () => {
+    if (isSuccess) {
+      dispatch(addItem({item: data}));
+    }
+    navigation.navigate('Cart');
   };
+
+  const handleAdd = () => {
+    if (isSuccess) {
+      dispatch(addItem({item: data}));
+    }
+  };
+
+  const handleLike = () => {
+    if (isSuccess) {
+      dispatch(addToFavorite({item: data}));
+    }
+  };
+
+  const handleCartClick = () => {
+    navigation.navigate('Cart');
+  };
+
   return (
     <View className="h-full w-full flex-col bg-white pt-5">
       <View className="flex-col px-5 items-start w-full">
@@ -27,12 +68,14 @@ const Details = ({route, navigation}: Props) => {
             className="w-8 h-8 items-center justify-center bg-gray rounded-full">
             <RightArrowSvg />
           </Pressable>
-          <BagSvg stroke={'black'} />
+          <Pressable onPress={handleCartClick} className="p-2">
+            <BagSvg stroke={'black'} />
+          </Pressable>
         </View>
         <Text className="text-black text-5xl font-semibold mt-5 ">
-          {route.params.itemId}
+          {data?.title}
         </Text>
-        <RatingStar rating={4.5} />
+        <RatingStar rating={data?.rating} />
       </View>
       <View className="w-full my-3 relative">
         <Pressable
@@ -40,31 +83,30 @@ const Details = ({route, navigation}: Props) => {
           onPress={handleLike}>
           <HeartSvg stroke={'black'} />
         </Pressable>
-        <ImageSlider
-          data={[
-            'https://i.dummyjson.com/data/products/6/1.png',
-            'https://i.dummyjson.com/data/products/6/2.jpg',
-            'https://i.dummyjson.com/data/products/6/3.png',
-          ]}
-          autoPlay={true}
-        />
+        <ImageSlider data={image} autoPlay={true} closeIconColor="gray" />
       </View>
       <View className="flex-col px-5 items-start w-full flex-grow">
         <View className="flex-row items-center">
-          <Text className="text-lightBlue font-semibold text-lg">{`$ ${'34.7'}`}</Text>
+          <Text className="text-lightBlue font-semibold text-lg">{`$ ${data?.price}`}</Text>
           <View className="flex-row rounded-full items-center ml-3 py-1 px-2 bg-blue">
             <Text className="text-white/80 text-md font-normal">
-              $22.04 OFF
+              {`$${
+                isSuccess && getOff(data.discountPercentage, data.price)
+              } OFF`}
             </Text>
           </View>
         </View>
         <View className="flex-row items-center w-full justify-evenly mt-8">
-          <Pressable className="border border-lightBlue flex-grow bg-white rounded-2xl p-5 items-center justify-center mr-4">
+          <Pressable
+            onPress={handleAdd}
+            className="border border-lightBlue flex-grow bg-white rounded-2xl p-5 items-center justify-center mr-4">
             <Text className="text-lightBlue text-base font-semibold">
               Add To Cart
             </Text>
           </Pressable>
-          <Pressable className="bg-lightBlue rounded-2xl p-5 flex-grow items-center justify-center ml-4">
+          <Pressable
+            onPress={handleBuy}
+            className="bg-lightBlue rounded-2xl p-5 flex-grow items-center justify-center ml-4">
             <Text className="text-white/80 text-base font-semibold">
               Buy Now
             </Text>
@@ -75,8 +117,7 @@ const Details = ({route, navigation}: Props) => {
         </Text>
         <ScrollView>
           <Text className="text-black/60 text-base font-normal mt-2 ">
-            Praesent commodo cursus magna, vel scelerisque nisl consectetur et.
-            Nullam quis risus eget urna mollis ornare vel eu leo.
+            {data?.description}
           </Text>
         </ScrollView>
       </View>

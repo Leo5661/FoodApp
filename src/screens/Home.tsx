@@ -1,4 +1,4 @@
-import {View, Text, FlatList} from 'react-native';
+import {View, Text, FlatList, Pressable} from 'react-native';
 import React from 'react';
 import BagSvg from '../assets/bag.svg';
 import SearchBox from '../components/SearchBox';
@@ -6,24 +6,34 @@ import DownArrowSvg from '../assets/down_arrow.svg';
 import OfferCard from '../components/OfferCard';
 import {OfferList} from '../utils/OfferList';
 import ItemCard from '../components/ItemCard';
-import {ItemList} from '../utils/ItemList';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {HomeStackParamList} from '../navigation/HomeStackNavigator';
+import {useDispatch} from '../hooks/useReduxHooks';
+import {addItem} from '../redux/slices/CartSlice';
+import {addToFavorite} from '../redux/slices/FavoriteSlice';
+import {useGetItemQuery} from '../redux/slices/apiSlice/itemList';
+import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Home'>;
 
 const Home = ({navigation}: Props) => {
-  const handleItemClick = (item: string) => {
+  const dispatch = useDispatch();
+  const {isLoading, data, error} = useGetItemQuery('');
+  const handleItemClick = (item: number) => {
     navigation.navigate('Details', {itemId: item});
-    console.log(`Selected ${item}`);
   };
 
-  const handleAdd = (item: string) => {
-    console.log(`Added ${item}`);
+  const handleAdd = (item: any) => {
+    console.log('clicked add');
+    dispatch(addItem({item: item}));
   };
 
-  const handleLike = (item: string) => {
-    console.log(`Liked ${item}`);
+  const handleLike = (item: any) => {
+    console.log('clicked like');
+    dispatch(addToFavorite({item: item}));
+  };
+  const handleCartClick = () => {
+    navigation.navigate('Cart');
   };
 
   return (
@@ -31,7 +41,9 @@ const Home = ({navigation}: Props) => {
       <View className="flex-col py-8 px-4 bg-lightBlue">
         <View className="flex-row justify-between items-center">
           <Text className="text-white text-2xl font-semibold">Hey, Rahul</Text>
-          <BagSvg className="text-white" stroke={'white'} />
+          <Pressable onPress={handleCartClick} className="p-2">
+            <BagSvg className="text-white" stroke={'white'} />
+          </Pressable>
         </View>
         <View className="my-8">
           <SearchBox />
@@ -79,14 +91,15 @@ const Home = ({navigation}: Props) => {
             className="h-10"
             contentContainerStyle={{flexGrow: 1}}
             numColumns={2}
-            data={ItemList}
+            data={data?.products}
             renderItem={({item}) => (
               <ItemCard
                 price={item.price}
                 name={item.title}
-                onItemClick={() => handleItemClick(item.title)}
-                onLike={() => handleLike(item.title)}
-                onAdd={() => handleAdd(item.title)}
+                thumbnail={item.thumbnail}
+                onItemClick={() => handleItemClick(item.id)}
+                onLike={() => handleLike(item)}
+                onAdd={() => handleAdd(item)}
               />
             )}
             keyExtractor={(item: any) => item.id}
