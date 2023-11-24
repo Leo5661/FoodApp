@@ -6,17 +6,19 @@ import RightArrowSvg from '../assets/right_arrow.svg';
 import RatingStar from '../components/RatingStar';
 import {ImageSlider} from 'react-native-image-slider-banner';
 import HeartSvg from '../assets/heart.svg';
-import {useDispatch} from '../hooks/useReduxHooks';
-import {getOff} from '../utils/util';
-import {addItem} from '../redux/slices/CartSlice';
+import {useDispatch, useSelector} from '../hooks/useReduxHooks';
+import {getCount, getOff} from '../utils/util';
+import {addItem, removeItem} from '../redux/slices/CartSlice';
 import {addToFavorite} from '../redux/slices/FavoriteSlice';
 import {useGetItemByIdQuery} from '../redux/slices/apiSlice/itemList';
 import CartIcon from '../components/CartIcon';
 import AddFavorite from '../components/AddFavorite';
+import AddRemoveItemButton from '../components/AddRemoveItemButton';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Details'>;
 
 const Details = ({route, navigation}: Props) => {
+  const cartList = useSelector(state => state.persistedReducer.cart.cartItem);
   const {isLoading, isSuccess, data, error} = useGetItemByIdQuery(
     route.params.itemId,
   );
@@ -25,11 +27,13 @@ const Details = ({route, navigation}: Props) => {
 
   useEffect(() => {
     if (data) {
-      const imageArr = data.images.map((item: any) => {
-        return {img: item};
-      });
+      if (image.length == 0) {
+        const imageArr = data.images.map((item: any) => {
+          return {img: item};
+        });
 
-      setImage(image => [...image, ...imageArr]);
+        setImage(image => [...image, ...imageArr]);
+      }
     }
   }, [data]);
 
@@ -47,6 +51,11 @@ const Details = ({route, navigation}: Props) => {
   const handleAdd = () => {
     if (isSuccess) {
       dispatch(addItem({item: data}));
+    }
+  };
+  const handleRemove = () => {
+    if (isSuccess) {
+      dispatch(removeItem({item: data}));
     }
   };
 
@@ -98,13 +107,25 @@ const Details = ({route, navigation}: Props) => {
           </View>
         </View>
         <View className="flex-row items-center w-full justify-evenly mt-8">
-          <Pressable
-            onPress={handleAdd}
-            className="border border-lightBlue flex-grow bg-white rounded-2xl p-5 items-center justify-center mr-4">
-            <Text className="text-lightBlue text-base font-semibold">
-              Add To Cart
-            </Text>
-          </Pressable>
+          {getCount(cartList, data?.id!) ? (
+            <View className="border border-lightBlue flex-grow bg-white rounded-2xl p-3 items-center justify-center mr-4">
+              <AddRemoveItemButton
+                isDark={true}
+                buttonSize="8"
+                itemId={data?.id!}
+                onRemove={handleRemove}
+                onAdd={handleAdd}
+              />
+            </View>
+          ) : (
+            <Pressable
+              onPress={handleAdd}
+              className="border border-lightBlue flex-grow bg-white rounded-2xl p-5 items-center justify-center mr-4">
+              <Text className="text-lightBlue text-base font-semibold">
+                Add To Cart
+              </Text>
+            </Pressable>
+          )}
           <Pressable
             onPress={handleBuy}
             className="bg-lightBlue rounded-2xl p-5 flex-grow items-center justify-center ml-4">

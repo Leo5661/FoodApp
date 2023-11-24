@@ -6,7 +6,7 @@ type Props = {};
 
 const SearchBox = () => {
   return (
-    <View className="border bg-blue rounded-full flex-row items-center py-2 px-4">
+    <View className="bg-blue rounded-full flex-row items-center py-1 px-4">
       <SearchSvg />
       <TextInput
         className="text-lg font-light text-white/80 ml-4 flex-grow p-2"
