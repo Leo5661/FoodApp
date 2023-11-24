@@ -101,7 +101,8 @@ const Details = ({route, navigation}: Props) => {
           <View className="flex-row rounded-full items-center ml-3 py-1 px-2 bg-blue">
             <Text className="text-white/80 text-md font-normal">
               {`$${
-                isSuccess && getOff(data.discountPercentage, data.price)
+                isSuccess &&
+                getOff(data.discountPercentage, data.price).toFixed(2)
               } OFF`}
             </Text>
           </View>
