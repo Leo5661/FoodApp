@@ -26,30 +26,31 @@ export const cartSlice = createSlice({
         count: 1,
         item: action.payload.item,
       };
-      if (state.cartItem.length == 0) {
-        state.cartItem.splice(state.cartItem.length, 0, addItem);
+
+      const alreadyPresentItemIndex = state.cartItem.findIndex(
+        item => action.payload.item.id === item.item.id,
+      );
+
+      console.log('index: ===========>', alreadyPresentItemIndex);
+      if (alreadyPresentItemIndex != -1) {
+        state.cartItem[alreadyPresentItemIndex].count += 1;
       } else {
-        state.cartItem.forEach((item: any) => {
-          const index = state.cartItem.indexOf(item);
-          if (state.cartItem[index].item.id === action.payload.item.id) {
-            state.cartItem[index].count += 1;
-          } else {
-            state.cartItem.splice(state.cartItem.length, 0, addItem);
-          }
-        });
+        state.cartItem.splice(state.cartItem.length, 0, addItem);
       }
     },
+
     removeItem: (state, action: PayloadAction<ItemPayload>) => {
-      state.cartItem.forEach((item: any) => {
-        const index = state.cartItem.indexOf(item);
-        if (state.cartItem[index].item.id == action.payload.item.id) {
-          if (state.cartItem[index].count > 1) {
-            state.cartItem[index].count = state.cartItem[index].count - 1;
-          } else if (state.cartItem[index].count == 1) {
-            state.cartItem.splice(index, 1);
-          }
+      const itemIndex = state.cartItem.findIndex(
+        item => item.item.id === action.payload.item.id,
+      );
+
+      if (itemIndex != -1) {
+        if (state.cartItem[itemIndex].count == 1) {
+          state.cartItem.splice(itemIndex, 1);
+        } else {
+          state.cartItem[itemIndex].count -= 1;
         }
-      });
+      }
     },
   },
 });

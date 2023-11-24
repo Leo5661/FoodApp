@@ -1,6 +1,5 @@
-import {View, Text, FlatList, Pressable} from 'react-native';
+import {View, Text, FlatList} from 'react-native';
 import React from 'react';
-import BagSvg from '../assets/bag.svg';
 import SearchBox from '../components/SearchBox';
 import DownArrowSvg from '../assets/down_arrow.svg';
 import OfferCard from '../components/OfferCard';
@@ -9,10 +8,11 @@ import ItemCard from '../components/ItemCard';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {HomeStackParamList} from '../navigation/HomeStackNavigator';
 import {useDispatch} from '../hooks/useReduxHooks';
-import {addItem} from '../redux/slices/CartSlice';
+import {addItem, removeItem} from '../redux/slices/CartSlice';
 import {addToFavorite} from '../redux/slices/FavoriteSlice';
 import {useGetItemQuery} from '../redux/slices/apiSlice/itemList';
-import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
+import CartIcon from '../components/CartIcon';
+import {ItemType} from '../utils/ItemList';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Home'>;
 
@@ -22,18 +22,18 @@ const Home = ({navigation}: Props) => {
   const handleItemClick = (item: number) => {
     navigation.navigate('Details', {itemId: item});
   };
-
-  const handleAdd = (item: any) => {
-    console.log('clicked add');
+  const handleAdd = (item: ItemType) => {
     dispatch(addItem({item: item}));
   };
-
-  const handleLike = (item: any) => {
+  const handleLike = (item: ItemType) => {
     console.log('clicked like');
     dispatch(addToFavorite({item: item}));
   };
   const handleCartClick = () => {
     navigation.navigate('Cart');
+  };
+  const handleRemove = (item: ItemType) => {
+    dispatch(removeItem({item: item}));
   };
 
   return (
@@ -41,9 +41,7 @@ const Home = ({navigation}: Props) => {
       <View className="flex-col py-8 px-4 bg-lightBlue">
         <View className="flex-row justify-between items-center">
           <Text className="text-white text-2xl font-semibold">Hey, Rahul</Text>
-          <Pressable onPress={handleCartClick} className="p-2">
-            <BagSvg className="text-white" stroke={'white'} />
-          </Pressable>
+          <CartIcon stroke="white" onClick={handleCartClick} />
         </View>
         <View className="my-8">
           <SearchBox />
@@ -94,12 +92,11 @@ const Home = ({navigation}: Props) => {
             data={data?.products}
             renderItem={({item}) => (
               <ItemCard
-                price={item.price}
-                name={item.title}
-                thumbnail={item.thumbnail}
+                item={item}
                 onItemClick={() => handleItemClick(item.id)}
                 onLike={() => handleLike(item)}
                 onAdd={() => handleAdd(item)}
+                onRemove={() => handleRemove(item)}
               />
             )}
             keyExtractor={(item: any) => item.id}

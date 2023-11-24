@@ -30,7 +30,7 @@ const CartItem = ({item}: Props) => {
         <Text className="text-black/80 font-light text-base">{`$ ${item.item.price}`}</Text>
       </View>
       <AddRemoveItemButton
-        count={item.count}
+        itemId={item.item.id}
         onAdd={handleAdd}
         onRemove={handleRemove}
       />

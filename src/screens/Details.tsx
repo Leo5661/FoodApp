@@ -3,7 +3,6 @@ import React, {useEffect, useState} from 'react';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {HomeStackParamList} from '../navigation/HomeStackNavigator';
 import RightArrowSvg from '../assets/right_arrow.svg';
-import BagSvg from '../assets/bag.svg';
 import RatingStar from '../components/RatingStar';
 import {ImageSlider} from 'react-native-image-slider-banner';
 import HeartSvg from '../assets/heart.svg';
@@ -12,6 +11,8 @@ import {getOff} from '../utils/util';
 import {addItem} from '../redux/slices/CartSlice';
 import {addToFavorite} from '../redux/slices/FavoriteSlice';
 import {useGetItemByIdQuery} from '../redux/slices/apiSlice/itemList';
+import CartIcon from '../components/CartIcon';
+import AddFavorite from '../components/AddFavorite';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Details'>;
 
@@ -24,7 +25,7 @@ const Details = ({route, navigation}: Props) => {
 
   useEffect(() => {
     if (data) {
-      const imageArr = data.images.map(item => {
+      const imageArr = data.images.map((item: any) => {
         return {img: item};
       });
 
@@ -68,9 +69,7 @@ const Details = ({route, navigation}: Props) => {
             className="w-8 h-8 items-center justify-center bg-gray rounded-full">
             <RightArrowSvg />
           </Pressable>
-          <Pressable onPress={handleCartClick} className="p-2">
-            <BagSvg stroke={'black'} />
-          </Pressable>
+          <CartIcon stroke="black" onClick={handleCartClick} />
         </View>
         <Text className="text-black text-5xl font-semibold mt-5 ">
           {data?.title}
@@ -78,12 +77,14 @@ const Details = ({route, navigation}: Props) => {
         <RatingStar rating={data?.rating} />
       </View>
       <View className="w-full my-3 relative">
-        <Pressable
-          className="absolute right-3 top-2 z-10 w-10 h-10 items-center justify-center bg-gray rounded-md"
-          onPress={handleLike}>
-          <HeartSvg stroke={'black'} />
-        </Pressable>
-        <ImageSlider data={image} autoPlay={true} closeIconColor="gray" />
+        <View className="absolute right-3 top-2 z-10 w-10 h-10 items-center justify-center bg-gray rounded-md">
+          <AddFavorite onClick={handleLike} itemId={data?.id} />
+        </View>
+        <ImageSlider
+          data={image as any}
+          autoPlay={true}
+          closeIconColor="gray"
+        />
       </View>
       <View className="flex-col px-5 items-start w-full flex-grow">
         <View className="flex-row items-center">
