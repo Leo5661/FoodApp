@@ -19,3 +19,13 @@ export const isFavorite = (favList: ItemType[], itemId: number): boolean => {
   if (itemIndex == -1) return false;
   return true;
 };
+
+export const getCartTotal = (cartList: CartItemType[]): number => {
+  if (cartList.length == 0) return 0;
+
+  let total = 0;
+  cartList.forEach(item => {
+    total += item.item.price * item.count;
+  });
+  return total;
+};

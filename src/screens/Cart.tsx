@@ -6,11 +6,20 @@ import RightArrowSvg from '../assets/right_arrow.svg';
 import {useSelector} from '../hooks/useReduxHooks';
 import CartItem from '../components/CartItem';
 import EmptyCartSvg from '../assets/empty_cart.svg';
+import {getCartTotal} from '../utils/util';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Cart'>;
 
 const Cart = ({navigation}: Props) => {
   const cartList = useSelector(state => state.persistedReducer.cart.cartItem);
+  let total = 0;
+  let subTotal = getCartTotal(cartList);
+  const delivery = Number(2);
+  if (subTotal == 0) {
+    total = 0;
+  } else {
+    total = subTotal + delivery;
+  }
 
   const handleBack = () => {
     navigation.goBack();
@@ -44,17 +53,23 @@ const Cart = ({navigation}: Props) => {
         )}
       </View>
       <View className="flex-col bg-gray rounded-lg p-4">
-        <View className="flex-row justify-between px-2">
-          <Text>Subtotal</Text>
-          <Text>$35.96</Text>
+        <View className="flex-row justify-between px-2 my-1">
+          <Text className="text-black/80 text-base font-normal">Subtotal</Text>
+          <Text className="text-black/80 text-lg font-normal">{`$ ${Number(
+            subTotal,
+          ).toFixed(2)}`}</Text>
         </View>
         <View className="flex-row justify-between px-2">
-          <Text>Delivery</Text>
-          <Text>$2.00</Text>
+          <Text className="text-black/80 text-base font-normal">Delivery</Text>
+          <Text className="text-black/80 text-lg font-normal">{`$ ${Number(
+            delivery,
+          ).toFixed(2)}`}</Text>
         </View>
-        <View className="flex-row justify-between px-2">
-          <Text>Total</Text>
-          <Text>$37.96</Text>
+        <View className="flex-row justify-between px-2 mt-1 mb-3">
+          <Text className="text-black/80 text-base font-bold">Total</Text>
+          <Text className="text-black/80 text-lg font-bold">{`$ ${Number(
+            total,
+          ).toFixed(2)}`}</Text>
         </View>
 
         <Pressable
